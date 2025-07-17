@@ -1,0 +1,88 @@
+یک پروژه دارم که بخش اولش رو برات میفرستم. باید بهم کامل و مفهومی توضیحش بدی و بعد من بخش دوم رو میفرستم
+
+ Introduction
+ The project aims to implement sequential decision-making strategies for investment. Assume
+ you’re working in the Finance Department of a company. Your current task is to optimize
+ investment decisions over time using predictive models and optimization techniques. There
+ are three distinct opportunities to invest your capital: Gold, Cryptocurrencies (Bit
+coin and Ethereum), and Government Bonds. Each option has unique constraints as
+ described below.
+ Investment decisions are made on a weekly basis. At the beginning of every new week,
+ your available capital reflects the gains or losses from the previous week’s choices. Your
+ objective is to define the strategy, constraints, and variables to maximize the overall
+ revenue, using linear models and optimization tools.
+ Investment Options
+ Gold
+ • Revenue is influenced by global financial indicators.
+ • You can only buy/sell gold in whole number percentages of its price.
+ Cryptocurrencies (BTC and ETH)
+ • Revenue depends on highly volatile market conditions.
+ • You can buy(long)/sell(short) in any fractional amount of market prices.
+ • In addition to spot trading, margin trading is available with leverage 1 to 3.
+ 1
+• Margin trades must be closed within one month, and losses/gains are amplified ac
+cordingly.
+ • You may define TP (Take Profit) or SL (Stop Loss) levels. If these are triggered
+ during the week, a part of the position can be automatically closed before the week’s
+ end.
+ Bonds
+ • The revenue is fixed to 0.55% per month.
+ • Once bought, the capital is locked for one month.
+ • Investments can be fractional.
+
+
+
+
+ بخش دوم اینه:
+
+Spot and Margin Trading
+ In cryptocurrency markets, two common types of trading are spot trading and margin
+ trading.
+ Spot Trading
+ Spot trading involves buying and selling cryptocurrencies for immediate delivery at the
+ current market price. Once a spot trade is executed, ownership of the asset is transferred
+ instantly between buyer and seller. This is the most straightforward type of trading, without
+ any borrowing or leverage.
+ Margin Trading
+ Margin trading allows traders to borrow funds from an exchange to increase the size of their
+ trading positions. This enables them to trade with more capital than they actually hold,
+ amplifying both profits and losses. In contrast to futures trading, margin positions don’t
+ have a fixed expiration date — the position can be held as long as the trader maintains
+ the required margin and pays any associated interest fees. Traders can open either a long
+ position, where they profit from a price increase, or a short position, where they profit
+ from a price decrease by selling borrowed assets and buying them back at a lower price.
+ • Leverage: Crypto exchanges typically allow leverage up to 10x on margin trades. For
+ example, with 10x leverage, a trader with $1,000 can open a position worth $10,000.
+ • Amplified Risk: A 10% price move results in a 100% gain or loss on a 10x leveraged
+ position. Higher leverage increases both profit potential and risk of liquidation.
+ 2
+• Holding Duration: Margin positions don’t expire. Traders may hold them for as
+ long as they maintain sufficient margin and pay the interest fees on the borrowed funds.
+ • TP/SL Levels: Traders can set Take Profit (TP) and Stop Loss (SL) thresholds
+ to automatically close a trade when specific price levels are reached.
+ • Margin Calls and Liquidation: If the trader’s equity falls below the maintenance
+ margin level due to market movement, the exchange issues a margin call. If no addi
+tional collateral is provided, the position is liquidated to prevent further loss.
+ Implementation Guidelines
+ Your goal is to maximize the final wealth through a combination of forecasting and
+ optimization. The investment simulation begins on April 1, 2024, with an initial capital
+ of $50,000. Throughout the simulation, track weekly investment decisions and outcomes,
+ monitor asset price fluctuations, and calculate the portfolio value over time. At the end
+ of the simulation period, the final return on investment should be computed based on the
+ overall performance of the chosen strategies.
+ • Forecasting: Predict weekly prices using linear regression models applied to his
+torical data (only the close price is required).
+ • DataPreprocessing: For guidance on handling time series data, refer to this tutorial.
+ It provides useful insights into data preparation. Although you must implement the
+ linear model yourself, you may utilize Python libraries such as NumPy, Pandas,
+ matplotlib and etc for data processing and visualization.
+ • Modeling Tools: Use MiniZinc for formulating your linear regression and decision
+making models. You may connect Python with MiniZinc using the MiniZinc Python
+ library. Your implementation should include a model file (.mzn) and a data file (.dzn).
+ Final Report
+ While and after implementing the project, a full academic report should be written, contain
+ing documentation for the strategies used and the code implemented. This report should de
+tail the steps taken throughout the process, including forecasting, optimization, and decision
+making strategies and an analysis of your results. You can use any statistical measurements
+ for your runtime and performance. It’s also recommended to add charts to illustrate your
+ decision throughout the time.

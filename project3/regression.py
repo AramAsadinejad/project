@@ -134,4 +134,4 @@ def filter_by_method(csv_file, method_column_name, output_file='filtered_by_meth
 # Example usage:
 # compare_predictions_to_actuals("tra_predicted_from_2025-01-02.csv", "your_actual_data.csv")
 
-compare_predictions_to_actuals("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
+compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")

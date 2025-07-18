@@ -1,7 +1,7 @@
 from regression import regression
 import pandas as pd
 from gold_invest_day import get_next_day_price
-from minizinc_runner import run
+from minizinc_runner2 import run
 import json
 from bond_list import get_bonds_list
 from datetime import datetime, timedelta

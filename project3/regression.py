@@ -67,15 +67,15 @@ def regression(train_file, test_file, start_date_str, predict_days=7):
     
 
 
-def compare_predictions_to_actuals(predictions_file, actuals_file):
+def compare_and_save_best_predictions(predictions_file, actuals_file, output_file='filtered_predictions.csv'):
     # Load predictions and actuals
     pred_df = pd.read_csv(predictions_file, parse_dates=['Date'])
     actuals_df = pd.read_csv(actuals_file, parse_dates=['Price'])
 
-    # Rename 'Price' to 'Date' and 'Close' to 'Actual_Close' for merging clarity
+    # Rename columns for merging
     actuals_df = actuals_df.rename(columns={'Price': 'Date', 'Close': 'Actual_Close'})
 
-    # Merge based on date
+    # Merge on 'Date'
     merged_df = pd.merge(pred_df, actuals_df[['Date', 'Actual_Close']], on='Date', how='inner')
 
     # Calculate absolute errors
@@ -83,27 +83,53 @@ def compare_predictions_to_actuals(predictions_file, actuals_file):
     merged_df['Error_Residual'] = (merged_df['Predicted_Close_Residual'] - merged_df['Actual_Close']).abs()
     merged_df['Error_WeekdayAverage'] = (merged_df['Predicted_Close_WeekdayAverage'] - merged_df['Actual_Close']).abs()
 
-    # Compute Mean Absolute Error for each method
+    # Compute MAE
     mae_simple = merged_df['Error_Simple'].mean()
     mae_residual = merged_df['Error_Residual'].mean()
     mae_weekday = merged_df['Error_WeekdayAverage'].mean()
 
-    # Determine which method is best
+    # Determine best prediction column
     errors = {
-        'Simple Linear Regression': mae_simple,
-        'Residual-enhanced Regression': mae_residual,
-        'Weekday Average': mae_weekday
+        'Predicted_Close_Simple': mae_simple,
+        'Predicted_Close_Residual': mae_residual,
+        'Predicted_Close_WeekdayAverage': mae_weekday
     }
-    best_method = min(errors, key=errors.get)
+    best_col = min(errors, key=errors.get)
 
-    # Print results
     print("📊 Mean Absolute Errors:")
     print(f"  - Simple Linear Regression: {mae_simple:.4f}")
     print(f"  - Residual-enhanced Regression: {mae_residual:.4f}")
     print(f"  - Weekday Average: {mae_weekday:.4f}")
-    print(f"\n✅ Best prediction method: **{best_method}** (lowest MAE)")
+    print(f"\n✅ Best prediction method: **{best_col}** (lowest MAE)")
 
-    return merged_df  # Optional: to inspect individual errors if needed
+    # Prepare final output: just Date + Best_Prediction
+    filtered_df = merged_df[['Date', best_col]].rename(columns={best_col: 'Best_Prediction'})
+
+    # Save to CSV
+    filtered_df.to_csv(output_file, index=False)
+    print(f"\n💾 Filtered predictions saved to: {output_file}")
+
+    return filtered_df
+
+def filter_by_method(csv_file, method_column_name, output_file='filtered_by_method.csv'):
+    # Load the input CSV
+    df = pd.read_csv(csv_file, parse_dates=['Date'])
+
+    # Check if the method column exists
+    if method_column_name not in df.columns:
+        print(f"❌ Column '{method_column_name}' not found in {csv_file}")
+        print(f"✅ Available columns: {list(df.columns)}")
+        return None
+
+    # Filter to Date and specified method column
+    filtered_df = df[['Date', method_column_name]].rename(columns={method_column_name: 'Filtered_Prediction'})
+
+    # Save to CSV
+    filtered_df.to_csv(output_file, index=False)
+    print(f"\n📁 File saved: {output_file} — filtered by '{method_column_name}'")
+
+    return filtered_df
+
 
 # Example usage:
 # compare_predictions_to_actuals("tra_predicted_from_2025-01-02.csv", "your_actual_data.csv")

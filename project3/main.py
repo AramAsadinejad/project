@@ -21,11 +21,10 @@ regression("Ethereumtrain.csv","Ethereumtest.csv",start_date,28)
 regression("Bitcointrain.csv","Bitcointest.csv",start_date,28)
 
 
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
+compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Goldtest.csv")
+compare_and_save_best_predictions("Eth_predicted_from_2025-01-02.csv", "Ethereumtest.csv", "Eth_filtered.csv")
+compare_and_save_best_predictions("Bit_predicted_from_2025-01-02.csv", "Bitcointest.csv", "Bit_filtered.csv")
+
 
 
 current_start = pd.to_datetime(start_date)
@@ -43,13 +42,13 @@ while current_start <= max_date:
     filtered = test_df[test_df['Date'] == current_start]
     c_g = ""
     eth_result = tpsl(current_start, current_start + timedelta(days=7),
-                  "Ethereumtest.csv","Eth_predicted_from_2025-01-02.csv")
+                  "Ethereumtest.csv","Eth_filtered.csv")
     bit_result = tpsl(current_start, current_start + timedelta(days=7),
-                  "Bitcointest.csv","Bit_predicted_from_2025-01-02.csv")
+                  "Bitcointest.csv","Bit_filtered.csv")
     ethm_result = tpsl(current_start, current_start + timedelta(days=28),
-                  "Ethereumtest.csv","Eth_predicted_from_2025-01-02.csv")
+                  "Ethereumtest.csv","eth_filtered.csv")
     bitm_result = tpsl(current_start, current_start + timedelta(days=28),
-                  "Bitcointest.csv","Bit_predicted_from_2025-01-02.csv")
+                  "Bitcointest.csv","bit_filtered.csv")
 
     if not filtered.empty:
         c_g = get_price_of_day("Goldtest.csv",current_start)

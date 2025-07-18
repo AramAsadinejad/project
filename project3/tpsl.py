@@ -19,32 +19,32 @@ def tpsl(start_date, future_date, reference_file, future_file):
         raise ValueError(f"❌ No future data between {start_date} and {future_date} found.")
 
     # Prices above and below the entry price
-    above = fut_window[fut_window['Price'] > entry_price]
-    below = fut_window[fut_window['Price'] < entry_price]
+    above = fut_window[fut_window['Best_Prediction'] > entry_price]
+    below = fut_window[fut_window['Best_Prediction'] < entry_price]
 
     if above.empty and below.empty:
         raise ValueError("⚠️ No prices above or below the entry price in the given range.")
 
     # Max above → potential TP for long
-    max_above = above.loc[above['Close'].idxmax()] if not above.empty else None
+    max_above = above.loc[above['Best_Prediction'].idxmax()] if not above.empty else None
 
     # Min below → potential TP for short
-    min_below = below.loc[below['Close'].idxmin()] if not below.empty else None
+    min_below = below.loc[below['Best_Prediction'].idxmin()] if not below.empty else None
 
     # Compare which is further
-    distance_above = abs(max_above['Close'] - entry_price) if max_above is not None else -1
-    distance_below = abs(min_below['Close'] - entry_price) if min_below is not None else -1
+    distance_above = abs(max_above['Best_Prediction'] - entry_price) if max_above is not None else -1
+    distance_below = abs(min_below['Best_Prediction'] - entry_price) if min_below is not None else -1
 
     if distance_above > distance_below:
-        TP = max_above['Close']
+        TP = max_above['Best_Prediction']
         TP_date = max_above['Date']
-        SL = min_below['Close'] if min_below is not None else entry_price
+        SL = min_below['Best_Prediction'] if min_below is not None else entry_price
         SL_date = min_below['Date'] if min_below is not None else None
         isLong = True
     else:
-        TP = min_below['Close']
+        TP = min_below['Best_Prediction']
         TP_date = min_below['Date']
-        SL = max_above['Close'] if max_above is not None else entry_price
+        SL = max_above['Best_Prediction'] if max_above is not None else entry_price
         SL_date = max_above['Date'] if max_above is not None else None
         isLong = False
 

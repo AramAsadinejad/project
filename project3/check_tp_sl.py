@@ -1,7 +1,8 @@
 import pandas as pd
 from datetime import timedelta
+import json
 
-def check_tp_sl_and_calculate_profit(input_date, filename, days, tp, sl):
+def check_tp_sl_and_calculate_profit(input_date, filename, days, tp, sl, type):
     df = pd.read_csv(filename)
     df['Date'] = pd.to_datetime(df['Date']).dt.normalize()
     input_date = pd.to_datetime(input_date).normalize()
@@ -13,8 +14,19 @@ def check_tp_sl_and_calculate_profit(input_date, filename, days, tp, sl):
         if not row.empty:
             close_price = row['Close'].iloc[0]
             if close_price >= tp or close_price <= sl:
-                # به سود یا ضرر خوردیم، تابع محاسبه سود رو صدا بزن
-                # return calculate_profit_fn(entry_price, close_price, current_date, filename)
+                return calculate_profit(type, close_price)
     
     # اگر در این بازه هیچکدوم فعال نشدن
     return None
+
+
+def calculate_profit(type,closed_price):
+    with open("data.json", 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    count = 0
+    if type=="bit_spot":
+        count = data.get("bit_spot")
+    elif type=="eth_spot":
+        count = data.get("eth_spot")
+
+    return count * closed_price

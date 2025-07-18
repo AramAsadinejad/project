@@ -64,25 +64,48 @@ def regression(train_file, test_file, start_date_str, predict_days=7):
     future_df.to_csv(f"{train_file[0:3]}_predicted_from_{start_date_str}.csv", index=False)
     print(f"✅ پیش‌بینی برای {predict_days} روز از {start_date_str} ذخیره شد.")
     print(future_df)
+    
 
-    # رسم نمودار کل داده‌ها و پیش‌بینی
-    # plt.figure(figsize=(14, 6))
 
-    # plt.plot(train_df['Price'], train_df['Close'], label='Train Actual', color='black')
-    # plt.plot(test_df['Price'], test_df['Close'], label='Test Actual', color='gray')
-    # plt.plot(test_df['Price'], test_df['predicted1'], label='Test Predicted Linear', linestyle='--', color='blue')
-    # plt.plot(test_df['Price'], test_df['predicted2'], label='Test Predicted Residual', linestyle='--', color='green')
-    # plt.plot(test_df['Price'], test_df['predicted3'], label='Test Predicted Weekday Avg', linestyle='--', color='orange')
+def compare_predictions_to_actuals(predictions_file, actuals_file):
+    # Load predictions and actuals
+    pred_df = pd.read_csv(predictions_file, parse_dates=['Date'])
+    actuals_df = pd.read_csv(actuals_file, parse_dates=['Price'])
 
-    # plt.plot(future_dates, predicted1_future, label='Future Predicted Linear', color='blue')
-    # plt.plot(future_dates, predicted2_future, label='Future Predicted Residual', color='green')
-    # plt.plot(future_dates, predicted3_future, label='Future Predicted Weekday Avg', color='orange')
+    # Rename 'Price' to 'Date' and 'Close' to 'Actual_Close' for merging clarity
+    actuals_df = actuals_df.rename(columns={'Price': 'Date', 'Close': 'Actual_Close'})
 
-    # plt.xlabel('Date')
-    # plt.ylabel('Close Price')
-    # plt.title(f'Forecast from {start_date_str} for {predict_days} days')
-    # plt.legend()
-    # plt.grid(True)
-    # plt.xticks(rotation=45)
-    # plt.tight_layout()
-    # plt.show()
+    # Merge based on date
+    merged_df = pd.merge(pred_df, actuals_df[['Date', 'Actual_Close']], on='Date', how='inner')
+
+    # Calculate absolute errors
+    merged_df['Error_Simple'] = (merged_df['Predicted_Close_Simple'] - merged_df['Actual_Close']).abs()
+    merged_df['Error_Residual'] = (merged_df['Predicted_Close_Residual'] - merged_df['Actual_Close']).abs()
+    merged_df['Error_WeekdayAverage'] = (merged_df['Predicted_Close_WeekdayAverage'] - merged_df['Actual_Close']).abs()
+
+    # Compute Mean Absolute Error for each method
+    mae_simple = merged_df['Error_Simple'].mean()
+    mae_residual = merged_df['Error_Residual'].mean()
+    mae_weekday = merged_df['Error_WeekdayAverage'].mean()
+
+    # Determine which method is best
+    errors = {
+        'Simple Linear Regression': mae_simple,
+        'Residual-enhanced Regression': mae_residual,
+        'Weekday Average': mae_weekday
+    }
+    best_method = min(errors, key=errors.get)
+
+    # Print results
+    print("📊 Mean Absolute Errors:")
+    print(f"  - Simple Linear Regression: {mae_simple:.4f}")
+    print(f"  - Residual-enhanced Regression: {mae_residual:.4f}")
+    print(f"  - Weekday Average: {mae_weekday:.4f}")
+    print(f"\n✅ Best prediction method: **{best_method}** (lowest MAE)")
+
+    return merged_df  # Optional: to inspect individual errors if needed
+
+# Example usage:
+# compare_predictions_to_actuals("tra_predicted_from_2025-01-02.csv", "your_actual_data.csv")
+
+compare_predictions_to_actuals("Gol_predicted_from_2025-01-02.csv", "Gold.csv")

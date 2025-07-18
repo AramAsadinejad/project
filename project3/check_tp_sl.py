@@ -16,7 +16,6 @@ def check_tp_sl_and_calculate_profit(input_date, filename, days, tp, sl, type):
             if close_price >= tp or close_price <= sl:
                 return calculate_profit(type, close_price)
     
-    # اگر در این بازه هیچکدوم فعال نشدن
     return None
 
 
@@ -25,8 +24,8 @@ def calculate_profit(type,closed_price):
         data = json.load(f)
     count = 0
     if type=="bit_spot":
-        count = data.get("bit_spot")
+        count = data.get("bit_spot")[0]
     elif type=="eth_spot":
-        count = data.get("eth_spot")
+        count = data.get("eth_spot")[0]
 
     return count * closed_price

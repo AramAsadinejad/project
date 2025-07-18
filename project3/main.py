@@ -31,7 +31,7 @@ current_start = pd.to_datetime(start_date)
 with open("data.json", 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-capital = data.get("Capital")
+capital = data.get("capital")
 
 
 max_date = test_df['Date'].max()
@@ -55,16 +55,26 @@ while current_start <= max_date:
     else:
         c_g = get_next_day_price(current_start)
 
-    tpsl_flag = check_tp_sl_and_calculate_profit(current_start,"Goldtest.csv")
+    tpsl_eth_spot_flag = check_tp_sl_and_calculate_profit(current_start,"Ethereumtest.csv",7
+                                                 ,eth_result["TP"], eth_result["SL"],"eth_spot")
+    tpsl_bit_spot_flag = check_tp_sl_and_calculate_profit(current_start,"Bitcointest.csv",7
+                                                 ,bit_result["TP"], bit_result["SL"],"bit_spot")
+    tpsl_eth_m_flag = check_tp_sl_and_calculate_profit(current_start,"Ethereumtest.csv",28
+                                                 ,ethm_result["TP"], ethm_result["SL"],"eth_spot")
+    tpsl_bit_m_flag = check_tp_sl_and_calculate_profit(current_start,"Bitcointest.csv",28
+                                                 ,bitm_result["TP"], bitm_result["SL"],"bit_spot")
          
-    
+    print(capital)
+    filtered = pd.read_csv("filtered_predictions.csv")
+    p_g = filtered["Best_Prediction"].iloc[-1]
     run(capital=capital*95/100,bonds=get_bonds_list(current_start),
-            c_g=c_g, c_b=get_price_of_day("Bitcoin.csv",current_start),
-            c_e=get_price_of_day("Ethereum.csv",current_start),
-            p_b=bit_result['TP']+get_price_of_day("Bitcoin.csv",current_start),
-            p_e=eth_result['TP']+get_price_of_day("Ethereum.csv",current_start),
-            p_bm=bitm_result['TP']+get_price_of_day("Bitcoin.csv",current_start),
-            p_em=ethm_result['TP']+get_price_of_day("Ethereum.csv",current_start),
+            c_g=c_g, c_b=get_price_of_day("Bitcointest.csv",current_start),
+            c_e=get_price_of_day("Ethereumtest.csv",current_start),
+            p_g=p_g,
+            p_b=bit_result['TP']+get_price_of_day("Bitcointest.csv",current_start),
+            p_e=eth_result['TP']+get_price_of_day("Ethereumtest.csv",current_start),
+            p_bm=bitm_result['TP']+get_price_of_day("Bitcointest.csv",current_start),
+            p_em=ethm_result['TP']+get_price_of_day("Ethereumtest.csv",current_start),
     )
 
     current_start = current_start + timedelta(days=7)

@@ -2,7 +2,7 @@ import pandas as pd
 
 def tpsl(start_date, future_date, reference_file, future_file):
     # Load data
-    ref_df = pd.read_csv(reference_file, parse_dates=['Price']).rename(columns={'Price': 'Date'})
+    ref_df = pd.read_csv(reference_file, parse_dates=['Date'])
     fut_df = pd.read_csv(future_file, parse_dates=['Date'])
 
     # Get entry (close) price
@@ -19,8 +19,8 @@ def tpsl(start_date, future_date, reference_file, future_file):
         raise ValueError(f"❌ No future data between {start_date} and {future_date} found.")
 
     # Prices above and below the entry price
-    above = fut_window[fut_window['Close'] > entry_price]
-    below = fut_window[fut_window['Close'] < entry_price]
+    above = fut_window[fut_window['Price'] > entry_price]
+    below = fut_window[fut_window['Price'] < entry_price]
 
     if above.empty and below.empty:
         raise ValueError("⚠️ No prices above or below the entry price in the given range.")

@@ -1,3 +1,4 @@
+import pandas as pd
 
 def profit(csv_file):
     df = pd.read_csv(csv_file)
@@ -24,4 +25,4 @@ def profit(csv_file):
         print("کلیدی برای خواندن از JSON داده نشده است.")
     
     # اگه خواستی می‌تونی min و max رو برگردونی:
-    return min_price, max_price
+    return stop_loss, take_profit

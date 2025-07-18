@@ -70,13 +70,21 @@ def regression(train_file, test_file, start_date_str, predict_days=7):
 def compare_and_save_best_predictions(predictions_file, actuals_file, output_file='filtered_predictions.csv'):
     # Load predictions and actuals
     pred_df = pd.read_csv(predictions_file, parse_dates=['Date'])
-    actuals_df = pd.read_csv(actuals_file, parse_dates=['Price'])
+    actuals_df = pd.read_csv(actuals_file, parse_dates=['Date'])
 
     # Rename columns for merging
-    actuals_df = actuals_df.rename(columns={'Price': 'Date', 'Close': 'Actual_Close'})
+    actuals_df = actuals_df.rename(columns={'Close': 'Actual_Close'})
 
     # Merge on 'Date'
     merged_df = pd.merge(pred_df, actuals_df[['Date', 'Actual_Close']], on='Date', how='inner')
+
+    # Convert to numeric (in case some values are read as strings)
+    for col in ['Predicted_Close_Simple', 'Predicted_Close_Residual', 'Predicted_Close_WeekdayAverage', 'Actual_Close']:
+        merged_df[col] = pd.to_numeric(merged_df[col], errors='coerce')
+
+    # Drop rows with NaN values in any of the relevant columns
+    merged_df.dropna(subset=['Predicted_Close_Simple', 'Predicted_Close_Residual',
+                             'Predicted_Close_WeekdayAverage', 'Actual_Close'], inplace=True)
 
     # Calculate absolute errors
     merged_df['Error_Simple'] = (merged_df['Predicted_Close_Simple'] - merged_df['Actual_Close']).abs()
@@ -102,14 +110,13 @@ def compare_and_save_best_predictions(predictions_file, actuals_file, output_fil
     print(f"  - Weekday Average: {mae_weekday:.4f}")
     print(f"\n✅ Best prediction method: **{best_col}** (lowest MAE)")
 
-    # Prepare final output: just Date + Best_Prediction
+    # Prepare final output
     filtered_df = merged_df[['Date', best_col]].rename(columns={best_col: 'Best_Prediction'})
-
-    # Save to CSV
     filtered_df.to_csv(output_file, index=False)
     print(f"\n💾 Filtered predictions saved to: {output_file}")
 
     return filtered_df
+
 
 def filter_by_method(csv_file, method_column_name, output_file='filtered_by_method.csv'):
     # Load the input CSV
@@ -134,4 +141,4 @@ def filter_by_method(csv_file, method_column_name, output_file='filtered_by_meth
 # Example usage:
 # compare_predictions_to_actuals("tra_predicted_from_2025-01-02.csv", "your_actual_data.csv")
 
-compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")
+# compare_and_save_best_predictions("Gol_predicted_from_2025-01-02.csv", "Gold.csv")

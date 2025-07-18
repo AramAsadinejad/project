@@ -190,7 +190,7 @@ project/
 ---
 
 **Project by:** Mohammad-Yasin Farshad & Aram AsadiNejad  
-**Supervisor:** Dr. Ziarati  
+**Professor:** Dr. Ziarati  
 **TA:** Mohammadmehdi Zamani  
 **Date:** July 2025
 
